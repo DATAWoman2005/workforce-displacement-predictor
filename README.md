@@ -49,7 +49,28 @@ This creates two related problems:
 
 - an interactive Streamlit workforce portal
 
-Architecture diagram to be added.
+### Solution Architecture
+
+```mermaid
+flowchart TD
+    A[Supplied Job-Market Dataset<br/>500 observations · 10 variables]
+
+    A --> B[Data Preparation & Feature Engineering<br/>src/features.py]
+
+    B --> C[Experimental Automation-Risk Classification]
+    B --> D[Role & Skill Profiles]
+
+    C --> E[Risk Class & Class Probabilities<br/>Low · Medium · High]
+
+    D --> F[Skill-Adjacency & Career Recommender]
+    F --> G[Transition Rankings<br/>Shared Strengths · Skills to Strengthen]
+
+    E --> H[Streamlit Workforce Portal]
+    G --> H
+
+    H --> I[Worker View<br/>Experimental Risk Estimate<br/>Career Transition Recommendations]
+    H --> J[Workforce View<br/>Descriptive Risk Patterns<br/>Role & Industry Exploration]
+```
 
 ------------------------------------------------------------------------
 
@@ -282,7 +303,8 @@ task-level exposure measures and longitudinal employment indicators.
 ### 8.1 Clone the repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/DATAWoman2005/workforce-displacement-predictor.git
+cd workforce-displacement-predictor
 cd pod-nova-workforce-transition
 ```
 
