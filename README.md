@@ -2,6 +2,8 @@
 
 #### AI-Powered Job Displacement Risk & Career Reskilling
 
+**Developed by:** Adijat Adenaike
+
 **10Alytics × JengaGlobal Q3 Students Hackathon 2026 ·**
 
 **Track C: Data Science**
@@ -11,6 +13,10 @@
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-1.9.1-F7931E)
 ![Status](https://img.shields.io/badge/Status-Complete-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-green)
+
+### 🚀 Live Application
+
+[Launch the StrataWork Workforce Transition Portal](https://workforce-displacement-predictor.streamlit.app/)
 
 > A transparent decision-support tool that provides an experimental estimate of automation risk for a role and recommends realistic, skill-adjacent career transitions, while showing users what the model predicts, why, and how much confidence to place in the result.
 
