@@ -621,5 +621,7 @@ with workforce_tab:
 st.divider()
 
 st.caption(
-    "10Alytics × JengaGlobal Q3 Students Hackathon 2026 · " "Track C: Data Science"
+    "10Alytics × JengaGlobal Q3 Students Hackathon 2026 · "
+    "Track C: Data Science\n\n"
+    "Developed by Adijat Adenaike"
 )
