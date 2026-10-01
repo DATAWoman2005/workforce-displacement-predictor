@@ -6,6 +6,12 @@
 
 **Track C: Data Science**
 
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.64-FF4B4B)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-1.9.1-F7931E)
+![Status](https://img.shields.io/badge/Status-Complete-brightgreen)
+![License](https://img.shields.io/badge/License-MIT-green)
+
 > A transparent decision-support tool that provides an experimental estimate of automation risk for a role and recommends realistic, skill-adjacent career transitions, while showing users what the model predicts, why, and how much confidence to place in the result.
 
 ------------------------------------------------------------------------
