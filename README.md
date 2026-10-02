@@ -110,11 +110,21 @@ A key limitation is that the supplied dataset does not contain task-level observ
 
 ## 5. Methodology
 
-### 5.1 Exploratory data analysis
+The project was structured as two related but methodologically distinct components: automation-risk classification and career-transition recommendation. This distinction was maintained because estimating a labelled outcome and identifying skill-adjacent occupations represent different analytical tasks.
+
+### 5.1 Exploratory statistical analysis
 
 Status: Complete
 
 [`notebooks/01_eda.ipynb`](notebooks/01_eda.ipynb)
+
+Automation risk was formulated as a supervised three-class classification problem with Low, Medium, and High as the target categories. Before predictive modelling, the supplied predictors were examined for univariate statistical relationships with the target.
+
+Associations between categorical predictors and automation risk were assessed using chi-square tests of independence, with Cramér's V reported to quantify the strength of association. Salary differences across the three risk groups were examined using the Kruskal–Wallis test.
+
+Because multiple predictor–target hypotheses were tested, p-values were adjusted using the Benjamini–Hochberg false discovery rate procedure, which controls the expected proportion of false discoveries arising from multiple hypothesis testing (Benjamini & Hochberg, 1995).
+
+Although a small number of unadjusted tests produced nominal p-values of approximately .04, none remained statistically robust after multiplicity correction, and the corresponding effect sizes were small. The exploratory analysis therefore provided little evidence that any single supplied predictor had a strong reproducible relationship with the automation-risk label.
 
 ### 5.2 Feature engineering
 
@@ -122,31 +132,54 @@ Status: Complete
 
 [`src/features.py`](src/features.py)
 
-### 5.3 Modelling & evaluation
+Feature engineering converted selected supplied variables into model-ready representations while preserving the original observations. Engineered features included ordinal encodings of AI adoption, company size and projected growth; a binary remote-work indicator; a skill-exposure measure; an interaction representing AI pressure; and within-group salary percentile features.
+
+Feature engineering was applied consistently through the project pipeline so that the same transformations could be reproduced during model training and application deployment.
+
+### 5.3 Predictive modelling and evaluation
 
 Status: Complete
 
 [`notebooks/02_model_training_validation.ipynb`](notebooks/02_model_training_validation.ipynb)
 
-### 5.4 Validity Assessment
+The absence of strong univariate associations was not treated as proof that prediction was impossible. A separate predictive question was therefore examined: could multiple features, when considered jointly, recover useful structure for classifying automation risk?
 
-Status: Complete
+Categorical and numerical predictors were processed within leakage-safe modelling pipelines so that transformations estimated from training data were not learned from held-out observations. The data were divided into training and untouched test sets using stratification to preserve the distribution of the three target classes.
 
-Model validity was assessed using a stratified held-out test set,
-5-fold cross-validation, class-level precision, recall and F1 scores,
-a confusion matrix, and comparison against the approximately one-third
-chance baseline for the balanced three-class target.
+A majority-class baseline was established before fitting machine-learning models. Multinomial Logistic Regression, Random Forest and XGBoost were compared using stratified five-fold cross-validation on the training data. Maintaining independent data for final model assessment is important because performance estimates obtained during model development and selection can otherwise become optimistically biased (Varma & Simon, 2006).
 
-The final model performed only slightly above chance, so predictive
-outputs are treated as experimental rather than validated forecasts.
+Model performance was assessed using accuracy and macro-F1. Macro-F1 was included because it gives equal weight to performance across each of the three target classes.
 
-### 5.5 Skill adjacency & career mapping
+Cross-validation performance remained close to the approximately one-third baseline associated with the balanced three-class target. The selected Random Forest achieved approximately 0.35 test accuracy and 0.344 macro-F1 on the untouched test set.
+
+These results were interpreted conservatively. They do not provide evidence that Random Forest is an effective predictor of real-world automation risk. Instead, the findings indicate that the supplied feature set contains insufficient reproducible predictive information to reliably discriminate among the provided Low, Medium and High automation-risk labels.
+
+
+### 5.4 Skill adjacency & career mapping
 
 Status: Complete
 
 [`notebooks/03_skill_mapping.ipynb`](notebooks/03_skill_mapping.ipynb)
 
-### 5.6 Streamlit application
+Because automation-risk classification and career guidance answer different questions, the career-transition component was implemented separately from the predictive classifier.
+
+The transition engine is a transparent content-based recommender, rather than a second predictive model claiming to estimate an individual's future occupation. Content-based job recommendation can represent profiles and candidate jobs using their characteristics and rank candidates according to similarity; cosine similarity has been used for this form of profile-based job matching (Heap et al., 2014).
+
+Within this project, occupations were represented as normalized skill-profile vectors derived from the supplied Required_Skills observations. Cosine similarity was used to quantify skill adjacency between occupations.
+
+Candidate roles were subsequently ranked using an explicitly defined composite score based on:
+
+60% skill-profile similarity;
+
+25% observed projected-growth share; and
+
+15% lower observed High automation-risk share.
+
+The resulting transition scores should therefore be interpreted as dataset-derived decision-support scores, not probabilities that a worker will successfully transition into a particular occupation. No longitudinal employment histories or observed worker transitions were available in the supplied dataset with which to estimate or validate such probabilities.
+
+This separation allows the application to provide career guidance without overstating what can be inferred from the underlying data: the classifier reports what can be learned about the supplied automation-risk label, while the recommendation engine identifies skill-adjacent alternatives according to transparent, predefined criteria.
+
+### 5.5 Streamlit application
 
 Status: Complete
 
@@ -159,7 +192,9 @@ The Streamlit application provides two interfaces:
 
 The application is implemented in [`app.py`](app.py).
 
-### 5.7 System Validation
+
+
+### 5.6 System Validation
 
 Status: Complete
 
@@ -353,4 +388,15 @@ web browser to access the application.
 
 The repository includes the processed application artifacts and saved
 experimental model required by `app.py`.
+
+## 9. Contributors
+Adijat Adenaike
+
+## 10. References
+
+Benjamini, Y., & Hochberg, Y. (1995). Controlling the false discovery rate: A practical and powerful approach to multiple testing. Journal of the Royal Statistical Society: Series B (Methodological), 57(1), 289–300. https://doi.org/10.1111/j.2517-6161.1995.tb02031.x
+
+Heap, B., Krzywicki, A., Wobcke, W., Bain, M., & Compton, P. (2014). Combining career progression and profile matching in a job recommender system. In PRICAI 2014: Trends in Artificial Intelligence (pp. 396–408). Springer. https://doi.org/10.1007/978-3-319-13560-1_32
+
+Varma, S., & Simon, R. (2006). Bias in error estimation when using cross-validation for model selection. BMC Bioinformatics, 7, 91. https://doi.org/10.1186/1471-2105-7-91
 
